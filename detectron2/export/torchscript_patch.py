@@ -316,7 +316,8 @@ def patch_nonscriptable_classes():
         ret = deepcopy(self)
         ret.stages = nn.ModuleList(ret.stages)
         for k in self.stage_names:
-            delattr(ret, k)
+            if hasattr(ret, k):
+                delattr(ret, k)
         return ret
 
     ResNet.__prepare_scriptable__ = prepare_resnet
