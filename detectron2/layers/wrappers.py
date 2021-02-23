@@ -13,7 +13,6 @@ import torch
 from torch.nn import functional as F
 
 from detectron2.utils.env import TORCH_VERSION
-from torch.nn.common_types import _size_1_t, _size_2_t, _size_3_t
 
 
 def cat(tensors: List[torch.Tensor], dim: int = 0):
@@ -53,20 +52,7 @@ class Conv2d(torch.nn.Conv2d):
     A wrapper around :class:`torch.nn.Conv2d` to support empty inputs and more features.
     """
 
-    def __init__(
-        self,
-        in_channels: int,
-        out_channels: int,
-        kernel_size: _size_2_t,
-        stride: _size_2_t = 1,
-        padding: _size_2_t = 0,
-        dilation: _size_2_t = 1,
-        groups: int = 1,
-        bias: bool = True,
-        padding_mode: str = 'zeros',  # TODO: refine this type
-        norm = None,
-        activation = None
-    ):
+    def __init__(self, *args, **kwargs):
         """
         Extra keyword arguments supported in addition to those in `torch.nn.Conv2d`:
 
@@ -76,9 +62,9 @@ class Conv2d(torch.nn.Conv2d):
 
         It assumes that norm layer is used before activation.
         """
-        super(Conv2d, self).__init__(
-            in_channels, out_channels, kernel_size, stride, padding, dilation,
-            groups, bias, padding_mode)
+        norm = kwargs.pop("norm", None)
+        activation = kwargs.pop("activation", None)
+        super().__init__(*args, **kwargs)
 
         self.norm = norm
         self.activation = activation
